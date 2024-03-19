@@ -1,11 +1,54 @@
 import { useState } from "react";
 import { useEffect } from "react";
 
+const EQ_ITEMS = [
+  { knife: { damage: 2, times: 2, cost: 1 } },
+  { sword: { damage: 4, times: 1, cost: 2 } },
+  { battleAxe: { damage: 5, times: 2, cost: 3 } },
+  { legendarySword: { damage: 6, times: 4, cost: 1, healthOnUse: 2 } },
+  { shield: { damage: 0, times: 1, cost: 1 } },
+  { staff: { damage: 10, times: 1, cost: 3 } },
+  {
+    magicznaKula: {
+      damage: 20,
+      times: 4,
+      cost: 1,
+    },
+  },
+];
+
+const CLASSES = {
+  Rogue: {
+    type: "Rogue",
+    weapon: EQ_ITEMS[0],
+    health: 125,
+    actions: 4,
+    luck: 5,
+    backpack: ["key"],
+  },
+  Warrior: {
+    type: "Knight",
+    weapon: EQ_ITEMS[1],
+    health: 175,
+    actions: 5,
+    luck: 2,
+    backpack: [EQ_ITEMS[4]],
+  },
+  Mage: {
+    type: "Mage",
+    weapon: EQ_ITEMS[5],
+    health: 100,
+    actions: 4,
+    luck: 3,
+    backpack: [EQ_ITEMS[3]],
+  },
+};
+
 export default function App() {
   const [player, setPlayer] = useState({
-    name: "pawel",
+    name: "",
     money: parseInt(10),
-    class: "Warrior",
+    type: "",
     weapon: "Pała",
     health: 100,
     actions: 5,
@@ -13,11 +56,32 @@ export default function App() {
   });
 
   useEffect(() => {
-    setPlayer({
-      ...player,
-      name: prompt("Name yourself"),
-    });
+    let playerName;
+    let chosenOne;
+    const chooseClass = () => {
+      playerName = prompt("Name yourself");
+      chosenOne = prompt("Choose Class: Knight, Rogue or Mage", "Mage");
+    };
+    chooseClass();
+    if (chosenOne) {
+      setPlayer({
+        money: 100,
+        name: playerName,
+        type: chosenOne,
+      });
+    }
   }, []);
+
+  useEffect(() => {
+    if (player.type) {
+      setPlayer((prev) => {
+        return {
+          ...prev,
+          ...CLASSES[player.type],
+        };
+      });
+    }
+  }, [player.type]);
 
   function instructions() {
     console.log(
